@@ -1,0 +1,114 @@
+Source: sysvinit
+Section: admin
+Priority: required
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+XSBC-Original-Maintainer: Debian sysvinit maintainers <pkg-sysvinit-devel@lists.alioth.debian.org>
+Build-Depends:
+ debhelper (>= 9.20120410),
+ po-debconf,
+ quilt (>= 0.40),
+ libselinux1-dev (>= 1.14) [linux-any],
+ libsepol1-dev [linux-any]
+Standards-Version: 3.9.5
+Homepage: http://savannah.nongnu.org/projects/sysvinit
+Vcs-Git: git://anonscm.debian.org/collab-maint/sysvinit.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/sysvinit.git
+
+Package: sysvinit-utils
+Architecture: any
+Multi-Arch: foreign
+Conflicts: last, sysvconfig, chkconfig (<< 11.0-79.1-2), startpar (<< 0.58-2)
+Replaces: last, sysvinit (<= 2.86.ds1-65)
+Depends: ${shlibs:Depends}, ${misc:Depends}, init-system-helpers (>= 1.25~)
+Breaks: upstart (<< 1.5-0ubuntu5), systemd (<< 215)
+# sulogin, last, lastb and mesg was moved to the util-linux package
+ , util-linux (<< 2.26.2-3)
+Suggests: bootlogd, sash
+Description: System-V-like utilities
+ This package contains the important System-V-like utilities.
+ .
+ Specifically, this package includes:
+ killall5, pidof
+
+Package: sysv-rc
+Architecture: all
+Multi-Arch: foreign
+Recommends: lsb-base (>= 3.2-14)
+Suggests: bum
+Pre-Depends: init-system-helpers (>= 1.25~)
+Depends:
+ ${misc:Depends},
+ sysvinit-utils (>= 2.86.ds1-62),
+ insserv (>> 1.12.0-10)
+Breaks: initscripts (<< 2.86.ds1-63), systemd (<< 215)
+Description: System-V-like runlevel change mechanism
+ This package provides support for the System-V like system
+ for booting, changing runlevels, and shutting down,
+ configured through symbolic links in /etc/rc?.d/.
+
+Package: initscripts
+Architecture: any
+Multi-Arch: foreign
+Depends:
+ ${shlibs:Depends}, ${misc:Depends}, ${mount:Depends},
+ debianutils (>= 4),
+ lsb-base (>= 3.2-14),
+ sysvinit-utils (>= 2.88dsf-50), sysv-rc | file-rc,
+ coreutils (>= 5.93),
+Recommends: psmisc, e2fsprogs
+Conflicts:
+ libdevmapper1.02.1 (<< 2:1.02.24-1),
+Replaces: libc6, libc6.1, libc0.1, libc0.3
+Breaks:
+# Needed for ifquery
+ ifupdown (<< 0.7.46),
+# /bin/mountpoint was moved to util-linux
+ util-linux (<< 2.26.2-4~),
+# Packages using /lib/init/rw which must transition to /run.
+# These breaks may be removed after wheezy is released.
+ aide (<< 0.15.1-5),
+ atm-tools (<< 1:2.5.1-1.3),
+ console-common (<< 0.7.86),
+ console-setup (<< 1.74),
+ cruft (<< 0.9.16),
+ eepc-acpi-scripts (<< 1.1.12),
+ fcheck (<< 2.7.59-16),
+ hostapd (<< 1:0.7.3-3),
+ live-build (<< 3.0~a26-1),
+ ltsp-client-core (<< 5.2.16-1),
+ mdadm (<< 3.2.2-1),
+ nbd-client (<< 1:2.9.23-1),
+ nfs-common (<< 1:1.2.5-3),
+ portmap (<< 6.0.0-2),
+ readahead-fedora (<< 2:1.5.6-3),
+ resolvconf (<< 1.49),
+ rpcbind (<< 0.2.0-7),
+ rsyslog (<< 5.8.2-2),
+ splashy (<< 0.3.13-5.1+b1),
+ sysklogd (<< 1.5-6.2),
+ wpasupplicant (<< 0.7.3-4),
+ xymon (<< 4.3.0~beta2.dfsg-9),
+ selinux-policy-default (<= 2:0.2.20100524-9),
+# Packages relying on a writable /etc/mtab which need fixing
+# before they can work with /proc/mounts and utab with libmount.
+ libpam-mount (<< 2.13-1),
+ autofs (<< 5.0.0),
+# Needed for transition to dependency-based boot for wheezy
+ bootchart (<< 0.10~svn407-4),
+# have systemd migrate UTC from /etc/default/rcS to /etc/adjtime before upgrading
+ systemd (<< 228-5ubuntu3),
+# Older versions of hurd do not implement the neccessary functionality
+ hurd (<< 0.5.git20131101~)
+Description: scripts for initializing and shutting down the system
+ The scripts in this package initialize a standard Debian
+ system at boot time and shut it down at halt or reboot time.
+
+Package: bootlogd
+Architecture: any
+Priority: optional
+Depends: ${shlibs:Depends}, ${misc:Depends}, lsb-base (>= 3.2-14)
+Replaces: sysvinit-utils (<< 2.88dsf-17), initscripts (<< 2.88dsf-17)
+Breaks: sysvinit-utils (<< 2.88dsf-17), initscripts (<< 2.88dsf-17)
+Description: daemon to log boot messages
+ bootlogd logs all messages printed to the system console during system boot,
+ and records those messages to a logfile.
